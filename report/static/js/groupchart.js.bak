@@ -1,0 +1,134 @@
+$(document).ready(function() {
+    var SeriesOptions = new Array();
+	var colors = Highcharts.getOptions().colors;
+    var mydiv={'online.ac.flow':1,'online.ac.tm':1};
+    var mydivID={'online.ac.flow':"chart1",'online.ac.tm':"chart2"};
+function createChartDiv(divId){  
+ var createDiv=document.createElement("div");  
+ createDiv.id= divId;
+ createDiv.style.width="1000px";  
+ createDiv.style.height="400px";  
+ document.getElementsByTagName('p')[0].appendChild(createDiv);
+ //createDiv.appendChild(creareDiv);  
+} 
+Date.prototype.format = function(format)
+{
+    var o = {
+                    "M+" : this.getMonth()+1, //month
+            "d+" : this.getDate(), //day
+            "h+" : this.getHours()-1, //hour
+            "m+" : this.getMinutes(), //minute
+            "s+" : this.getSeconds(), //second
+            "q+" : Math.floor((this.getMonth()+3)/3), //quarter
+                        "S" : this.getMilliseconds() //millisecond
+                                    }
+        if(/(y+)/.test(format))
+                format=format.replace(RegExp.$1,(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+            for(var k in o)
+                    if(new RegExp("("+ k +")").test(format))
+                            format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+                return format;
+}
+
+var mydate =new Date();
+var mydateformat=mydate.format("yyyy/MM/dd-hh:mm:ss");
+function randomChar(l) {
+ var x="123456789poiuytrewqasdfghjklmnbvcxzQWERTYUIPLKJHGFDSAZXCVBNM";
+ var tmp="";
+ for(var i=0;i< l;i++) {
+ tmp += x.charAt(Math.ceil(Math.random()*100000000)%x.length);
+ }
+ return tmp;
+}
+$("#push_data").live("click",function() {
+     $.post('/query',
+       {
+           metric : $('#typeahead1').val(),
+           tag: '{'+$('#typeahead2').val()+'}',
+           start : $('#typeahead3').val(),
+           end : $('#typeahead4').val()
+       },
+       function(data){
+          SeriesOptions[0] = {
+              name: '数据',
+              data: data
+            };
+        
+       var metric=$('#typeahead1').val();
+       if (mydiv[metric] ==1){
+       var divId=mydivID[metric];
+       document.getElementById(divId).innerHTML=creategroupChart(metric,divId);
+       }
+       else{
+       var l=10;
+       var divId=randomChar(l);
+       mydiv[metric]=1;
+       mydivID[metric]=divId;
+       createChartDiv(divId);
+       creategroupChart(metric,divId);
+       }
+   },"json");
+});
+     $.post('/query',
+       {
+           metric : "online.ac.flow",
+           tag: '',
+           start : mydateformat.toString(),
+           end : ''
+       },
+       function(data){
+          SeriesOptions[0] = {
+              name: '数据',
+              data: data
+            };
+          var divId='chart1'
+       var yname='online.ac.flow'
+       creategroupChart(yname,divId);
+   },"json");
+     $.post('/query',
+       {
+           metric : "online.ac.tm",
+           tag: '',
+           start : mydateformat.toString(),
+           end : ''
+       },
+       function(data){
+          SeriesOptions[0] = {
+              name: '数据',
+              data: data
+            };
+          var divId='chart2'
+       var yname='online.ac.tm'
+       creategroupChart(yname,divId);
+   },"json");
+
+   function creategroupChart(yname,divId){
+
+        chart = new Highcharts.StockChart({
+           chart: {
+              //renderTo : 'actestchart'
+              renderTo : divId
+            },
+           scrollbar: {
+               height : 20,
+               enabled: true
+            },
+           navigator: {
+               handles: {
+                   backgroundColor: 'yellow',
+                   borderColor: 'red'
+               }
+           },
+           tooltip:{
+               valueDecimals:2
+           },
+
+           yAxis: {
+               title:{
+                   text : yname
+                   }
+           },
+           series: SeriesOptions
+          });
+   }
+});

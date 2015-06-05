@@ -1,0 +1,4 @@
+export NEW_RELIC_CONFIG_FILE=newrelic.ini
+export NEW_RELIC_DEVELOPER_MODE=on
+export BLUEWARE_CONFIG_FILE=blueware.ini
+export BLUEWARE_DEVELOPER_MODE=on

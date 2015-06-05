@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <title>PythonAgent PerformTest</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<!-- The secondlist -->
+    <script src="{{ static_url }}/js/jquery-1.7.2.min.js"></script>
+    <script src="{{ static_url }}/js/bootstrap.min.js"></script>
+    <script src="{{ static_url }}/js/excanvas.js"></script>
+    <script src="{{ static_url }}/highcharts/highcharts.js"></script>
+    <script src="{{ static_url }}/highstock/modules/exporting.js"></script>
+	<!-- The styles -->
+    <link href="{{ static_url}}/css/bootstrap.min.css" rel="stylesheet">
+    <link id="bs-css" href="{{ static_url }}/css/bootstrap-cerulean.css" rel="stylesheet">
+    <link href="{{ static_url }}/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="{{ static_url }}/css/charisma-app.css" rel="stylesheet">
+    <script src="{{ static_url }}/js/bootstrap-dropdown.js"></script>
+    </head>
+<body>
+    
+{% set table_high = len(conf['ori']) + 1 %}
+<h1 align="center">None vs NewRelic vs OneApm</h1>
+<h3>Metrics</h3>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                <th>并发数</th>
+                <th>没有探针-RPS</th>
+                <th>NewRelic-RPS</th>
+                <th>OneApm-RPS</th>
+                <th>没有探针-TPR</th>
+                <th>Newrelic-TPR</th>
+                <th>OneApm-TPR</th>
+                </tr>
+          </thead>
+          <tbody>
+           {% for i in range(1,table_high) %}
+           <tr>
+                <th>{{i}}</th>
+                <th>{{conf['ori'][i]['rps']}}</th>
+                <th>{{conf['newrelic'][i]['rps']}}</th>
+                <th>{{conf['blueware'][i]['rps']}}</th>
+                <th>{{conf['ori'][i]['tpr']}}</th>
+                <th>{{conf['newrelic'][i]['tpr']}}</th>
+                <th>{{conf['blueware'][i]['tpr']}}</th>
+                </tr>
+                {% end%}        
+
+          </tbody>
+          </table>
+
+    <div id="rps" style="height: 500px; min-width: 600px"></div>
+    <div id="tpr" style="height: 500px; min-width: 600px"></div>
+<script type="text/javascript">
+$(function () {
+    $('#rps').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'RPS对比图'
+        },
+        subtitle: {
+            text: 'for python-agent'
+        },
+        xAxis: {
+            categories: {{conf['x']}}
+        },
+        yAxis: {
+            title: {
+                text: 'nums/sec'
+            }
+        },
+
+    plotOptions: {
+        spline: {
+            lineWidth: 1.5,
+            fillOpacity: 0.1,
+             marker: {
+                enabled: false,
+                states: {
+                    hover: {
+                        enabled: true,
+                        radius: 2
+                    }
+                }
+            },
+            shadow: false
+        }
+    },
+        series: [{
+            name: 'None',
+            data: {{conf['ori_rps']}}
+        }, {
+            name: 'NewRelic',
+            data: {{conf['newrelic_rps']}}
+        },{
+            name: 'OneApm',
+            data: {{conf['blueware_rps']}}
+        }]
+    });
+});
+
+
+
+
+$(function () {
+    $('#tpr').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'TPR对比图'
+        },
+        subtitle: {
+            text: 'for python-agent'
+        },
+        xAxis: {
+            categories: {{conf['x']}}
+        },
+        yAxis: {
+            title: {
+                text: 'response (ms)'
+            }
+        },
+        plotOptions: {
+        spline: {
+            lineWidth: 1.5,
+            fillOpacity: 0.1,
+             marker: {
+                enabled: false,
+                states: {
+                    hover: {
+                        enabled: true,
+                        radius: 2
+                    }
+                }
+            },
+            shadow: false
+        }
+    },
+        series: [{
+            name: 'None',
+            data: {{conf['ori_tpr']}}
+        }, {
+            name: 'NewRelic',
+            data: {{conf['newrelic_tpr']}}
+        },{
+            name: 'OneApm',
+            data: {{conf['blueware_tpr']}}
+        }]
+    });
+});
+</script>    
+<script src="{{ static_url }}/js/jquery-ui-1.8.21.custom.min.js"></script>
+<script src="{{ static_url }}/js/bootstrap-tab.js"></script>
+<script src="{{ static_url }}/js/bootstrap-affix.js"></script>
+<script src="{{ static_url }}/js/bootstrap-typeahead.js"></script>
+<script src="{{ static_url }}/js/bootstrap-toggle.js"</script>
+<script type="text/javascript">
+        var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+        document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fac622986ec80446583fb2131fc8b35c4' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+
+</body>
+</html>
