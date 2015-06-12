@@ -6,23 +6,22 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="">
 	<!-- The secondlist -->
-    <script src="{{ static_url }}/js/jquery-1.7.2.min.js"></script>
-    <script src="{{ static_url }}/js/bootstrap.min.js"></script>
-    <script src="{{ static_url }}/js/excanvas.js"></script>
-    <script src="{{ static_url }}/highcharts/highcharts.js"></script>
-    <script src="{{ static_url }}/highstock/modules/exporting.js"></script>
-	<!-- The styles -->
-    <link href="{{ static_url}}/css/bootstrap.min.css" rel="stylesheet">
-    <link id="bs-css" href="{{ static_url }}/css/bootstrap-cerulean.css" rel="stylesheet">
-    <link href="{{ static_url }}/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="{{ static_url }}/css/charisma-app.css" rel="stylesheet">
-    <script src="{{ static_url }}/js/bootstrap-dropdown.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://static.hcharts.cn/css/bootstrap.min.css">
+    <script type="text/javascript" src="http://static.hcharts.cn/jquery/jquery-2.0.2.min.js"></script>
+    <script type="text/javascript" src="http://www.hcharts.cn/demo/js/highcharts.js"></script>
+    <script type="text/javascript" src="http://www.hcharts.cn/demo/js/exporting.js"></script>
+
     </head>
 <body>
     
-{% set table_high = len(conf['ori']) + 1 %}
+{% set table_high = len(conf['ori']) %}
 <h1 align="center">None vs NewRelic vs OneApm</h1>
-<h3>Metrics</h3>
+
+    <div id="tpr" style="height: 500px; min-width: 600px"></div>
+    <div id="rps" style="height: 500px; min-width: 600px"></div>
+
+<h2>Metrics</h2>
+            <h4>安装了NewRelic探针后服务器响应速度比不装探针慢了<a style="color:red">{{conf['newrelic_tpr_slow']}}%</a>,安装了OneAPM探针后服务器响应速度比不装探针慢了<a style="color:red">{{conf['blueware_tpr_slow']}}%</a><h4/>
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -36,23 +35,23 @@
                 </tr>
           </thead>
           <tbody>
-           {% for i in range(1,table_high) %}
+           {% for i in range(1, table_high) %}
            <tr>
                 <th>{{i}}</th>
                 <th>{{conf['ori'][i]['rps']}}</th>
                 <th>{{conf['newrelic'][i]['rps']}}</th>
                 <th>{{conf['blueware'][i]['rps']}}</th>
-                <th>{{conf['ori'][i]['tpr']}}</th>
-                <th>{{conf['newrelic'][i]['tpr']}}</th>
-                <th>{{conf['blueware'][i]['tpr']}}</th>
+                <th>{{conf['ori_tpr'][i]}}</th>
+                <th>{{conf['newrelic_tpr'][i]}}|{{conf['newrelic_tpr'][i]-conf['ori_tpr'][i]}}</th>
+                <th>{{conf['blueware_tpr'][i]}}|{{conf['blueware_tpr'][i]-conf['ori_tpr'][i]}}</th>
                 </tr>
                 {% end%}        
 
           </tbody>
           </table>
 
-    <div id="rps" style="height: 500px; min-width: 600px"></div>
-    <div id="tpr" style="height: 500px; min-width: 600px"></div>
+    
+
 <script type="text/javascript">
 $(function () {
     $('#rps').highcharts({
@@ -115,7 +114,7 @@ $(function () {
             text: 'TPR对比图'
         },
         subtitle: {
-            text: 'for python-agent'
+            text: '安装了NewRelic探针后服务器响应速度比不装探针慢了{{conf['newrelic_tpr_slow']}}%,安装了OneAPM探针后服务器响应速度比不装探针慢了{{conf['blueware_tpr_slow']}}%'
         },
         xAxis: {
             categories: {{conf['x']}}
@@ -154,15 +153,7 @@ $(function () {
     });
 });
 </script>    
-<script src="{{ static_url }}/js/jquery-ui-1.8.21.custom.min.js"></script>
-<script src="{{ static_url }}/js/bootstrap-tab.js"></script>
-<script src="{{ static_url }}/js/bootstrap-affix.js"></script>
-<script src="{{ static_url }}/js/bootstrap-typeahead.js"></script>
-<script src="{{ static_url }}/js/bootstrap-toggle.js"</script>
-<script type="text/javascript">
-        var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-        document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fac622986ec80446583fb2131fc8b35c4' type='text/javascript'%3E%3C/script%3E"));
-    </script>
+
 
 </body>
 </html>

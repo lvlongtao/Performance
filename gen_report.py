@@ -39,6 +39,12 @@ class gen_report:
             self.data['blueware_rps'].append(float(blueware_data[i]['rps']))
             self.data['newrelic_tpr'].append(float(newrelic_data[i]['tpr']))
             self.data['newrelic_rps'].append(float(newrelic_data[i]['rps']))
+        
+        self.data['blueware_tpr_slow'] = (sum(self.data['blueware_tpr']) - sum(self.data['ori_tpr']))*100/\
+                                        sum(self.data['ori_tpr'])
+        self.data['newrelic_tpr_slow'] = (sum(self.data['newrelic_tpr']) - sum(self.data['ori_tpr']))*100/\
+                                        sum(self.data['ori_tpr'])
+
         return self.data
     
     def generate(self):
@@ -51,7 +57,10 @@ class gen_report:
         f.write(html)
 
 if __name__ == '__main__':
-    print gen_report().get_oridata()
+    d = gen_report().get_oridata()
     gen_report().generate()
+    print d
+
+
 
 
